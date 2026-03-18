@@ -32,7 +32,80 @@ def init_db():
                 created_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS coaching_reports (
+                id                  INTEGER PRIMARY KEY AUTOINCREMENT,
+                manager_id          TEXT    NOT NULL,
+                employee_id         TEXT    NOT NULL,
+                coachee_name        TEXT,
+                department          TEXT,
+                role                TEXT,
+                period              TEXT,
+                metrics_delta       TEXT,
+                feedback            TEXT,
+                wellbeing           TEXT,
+                intuition           TEXT,
+                target_fyi          TEXT,
+                prompt_version      TEXT,
+                generated_report    TEXT,
+                created_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
         conn.commit()
+
+
+def save_report(
+    manager_id: str,
+    employee_id: str,
+    coachee_name: str,
+    department: str,
+    role: str,
+    period: str,
+    metrics_delta: str,
+    feedback: str,
+    wellbeing: str,
+    intuition: str,
+    target_fyi: str,
+    prompt_version: str,
+    generated_report: str,
+) -> int:
+    """코칭 리포트 1건 저장. 저장된 row id 반환."""
+    with get_connection() as conn:
+        cursor = conn.execute(
+            """
+            INSERT INTO coaching_reports (
+                manager_id, employee_id, coachee_name,
+                department, role, period,
+                metrics_delta, feedback, wellbeing, intuition,
+                target_fyi, prompt_version, generated_report
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                manager_id, employee_id, coachee_name,
+                department, role, period,
+                metrics_delta, feedback, wellbeing, intuition,
+                target_fyi, prompt_version, generated_report,
+            ),
+        )
+        conn.commit()
+        return cursor.lastrowid
+
+
+def get_reports_by_employee(manager_id: str, employee_id: str) -> list[dict]:
+    """팀원별 코칭 리포트 히스토리 조회."""
+    with get_connection() as conn:
+        rows = conn.execute(
+            """
+            SELECT id, coachee_name, department, role,
+                   period, target_fyi, prompt_version,
+                   generated_report, created_at
+            FROM coaching_reports
+            WHERE manager_id = ? AND employee_id = ?
+            ORDER BY created_at DESC
+            """,
+            (manager_id, employee_id),
+        ).fetchall()
+        return [dict(row) for row in rows]
 
 
 def save_log(
