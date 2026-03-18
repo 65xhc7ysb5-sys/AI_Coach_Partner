@@ -10,6 +10,9 @@ coaching_logs.db
 
 # 백업 파일
 app_backup.py
+/backups
 
 # 가이드 파일
 app_migration_guide.py
+
+

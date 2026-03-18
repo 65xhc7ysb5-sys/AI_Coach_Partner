@@ -90,6 +90,7 @@ def generate_coaching_log(
     manager_id: str,
     input_data: dict,
     recent_logs: list[dict],
+    temperature: float = 0.4,
     gemini_model: str = "gemini-2.5-flash",
 ) -> str:
     """
@@ -104,6 +105,7 @@ def generate_coaching_log(
             agreed_action, followup_date
         }
         recent_logs: DB에서 가져온 최근 2개 로그 (Option A 톤 학습)
+        temperature: 코치의 톤과 문제 반영 default=0.4 ("출력이 너무 딱딱하게 느껴지면 0.5로, 너무 자유롭게 느껴지면 0.3으로 조정해보세요.")
         gemini_model: 사용할 Gemini 모델명
     """
     try:
@@ -144,8 +146,8 @@ def generate_coaching_log(
         response = client.models.generate_content(
             model=gemini_model,
             config=types.GenerateContentConfig(
-                system_instruction=LOG_SYSTEM_PROMPT.format(followup_date=followup_date),
-                temperature=0.4,  # 로그는 창의성보다 일관성 우선
+            system_instruction=LOG_SYSTEM_PROMPT.format(followup_date=followup_date),
+            temperature=temperature,
             ),
             contents=final_prompt,
         )

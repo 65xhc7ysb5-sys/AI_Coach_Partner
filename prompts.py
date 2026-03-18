@@ -66,7 +66,7 @@ COACHING_PROMPTS = {
         [OPTIONS]
         - 팀원의 관점을 180도 바꾸는 Co-Active 기반 'Paradigm Shift' 질문
 
-        [WAY FORWARD"]
+        [WAY FORWARD]
         - 실행 의지를 확인하고 팔로우업할 구체적 팁
 
         [DEFENSE]
