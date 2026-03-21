@@ -16,3 +16,5 @@ app_backup.py
 app_migration_guide.py
 
 
+# Internal documents — not for public repo
+docs/
