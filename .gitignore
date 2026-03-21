@@ -2,7 +2,7 @@ data_models.py
 .venv/
 .env
 __pycache__/
-
+.DS_Store
 
 # Database (개인정보 포함)
 *.db
